@@ -11,8 +11,11 @@ const carList = document.querySelector('#car__list')
 //*Vaciar el carrito
 const emptyCarButton = document.querySelector('#empty__cart')
 //? Necesito tener un array que reciba los elementos que debo introducir en el carrito de compras
-let carProducts = []
-
+let carProducts = [];
+//* Modal
+const modalContainer = document.querySelector('#modal-container')
+const modalElement = document.querySelector('#modal')
+let modalDetails = [];
 //* Lógica para mostrar y ocultar el carrito.
 carToggle.addEventListener('click', () => {
   carBlock.classList.toggle("nav__car__visible")
@@ -37,6 +40,12 @@ function eventListenersLoader(){
     carProducts = JSON.parse(localStorage.getItem('cart')) || [];
     carElementsHTML()
   })
+
+  //* Cuando se presione el botón "View Details"
+  productsList.addEventListener('click', modalProduct)
+
+  //* Cuando se dé click al botón para cerrar Modal
+  modalContainer.addEventListener('click', closeModal)
 }
 
 function getProducts() {
@@ -67,7 +76,7 @@ function printProducts(products){
       </div>
       <div class="product__container__button">
         <button class="car__button add__to__car" id="add__to__car" data-id="${products[i].id}">Add to cart</button>
-        <button class="product__details">View Details</button>
+        <button class="product__details" data-id="${products[i].id}">View Details</button>
       </div>
     </div>
     `
@@ -174,8 +183,32 @@ function emptyCar() {
 }
 
 //* Ventana Modal
+function modalProduct(event){
+  if(event.target.classList.contains('product__details')){
+    modalContainer.classList.add('show__modal')
+    const product = event.target.parentElement.parentElement
+    modalDetailsElement(product)
+  }
+}
 
+function closeModal(event){
+  if(event.target.classList.contains('icon__modal')){
+    modalContainer.classList.remove('show__modal')
+    modalElement.innerHTML = "";
+    modalDetails = []
+  }
+}
 
+function modalDetailsElement(product){
+  const infoDetails = [{
+    id: product.querySelector('button').getAttribute('data-id'),
+    image: product.querySelector('img').src,
+    name: product.querySelector('.product__container__name p').textContent,
+    price: product.querySelector('.product__container__price p').textContent,
+  }]
+  modalDetails = [...infoDetails]
+  console.log(modalDetails)
+}
 
 //* Local Storage
 
